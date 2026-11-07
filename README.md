@@ -76,7 +76,7 @@ python -m pytest -q tests           # robustness tests (odd sizes, gray/RGBA/16-
 | `docker build` + `docker run` (linux/arm64, Colima) + API call on `samples/lol_1.png` | image builds; app up in ~6 s; enhancement returned in 1.7 s |
 | Live app (Streamlit Cloud): laptop (1280 px) and phone (375 px) layouts, example → Enhance | works; ~1.6 s per photo |
 | Error states: missing image, non-image file, 10×10 image, unreadable upload | friendly message, Enhance disabled, no stack trace |
-| Fresh `git clone` → `pip install -r requirements-dev.txt` → `scripts/get_data.sh` → `prepare_data.py` → `make_synthetic.py` → `evaluate.py --only main` | <<REPRO_RESULT>> |
+| Fresh `git clone` → `pip install -r requirements-dev.txt` → `scripts/get_data.sh` → `prepare_data.py` → `make_synthetic.py` → `evaluate.py --only main` | identical data split (98 test-leaking + 399 duplicate pairs removed → 644 train / 33 val) and **identical metrics to 4 decimals** for all four methods on LOL-v1 and LOL-v2 (e.g. hybrid 18.0864 dB / 0.7375). This test found and fixed two bugs: the download script had no retry on network timeouts, and `pytest` was missing from `requirements-dev.txt`. |
 
 ## Repository layout
 
