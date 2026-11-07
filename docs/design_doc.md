@@ -4,9 +4,9 @@
 | :--- | :--- |
 | **Problem ID** | P1 |
 | **Problem Title** | Robust Low-Light Image Restoration and Enhancement |
-| **Team** | <<TEAM>> |
-| **Repository** | <<GITHUB>> |
-| **Live demo** | <<LIVE_URL>> |
+| **Team** | TXX · TEAM_NAME · Dhruv S P (USN1), Harshit Rudresh (USN2) |
+| **Repository** | https://github.com/dhruvo11/lumifuse-lowlight |
+| **Live demo** | https://lumifuse.streamlit.app |
 
 This document follows the section structure of the hackathon solution-report template and adds the design detail
 behind each decision. The architecture diagram (`docs/architecture.svg`) names the exact modules/functions described here.
