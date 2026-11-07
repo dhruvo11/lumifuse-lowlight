@@ -79,6 +79,17 @@ for k in ("LOL-v1 eval15", "LOL-v2-real test (unseen)", "Synthetic extreme-dark"
                  "Latency column here is evaluation wall-clock (GPU/MPS), not the CPU benchmark."))
 for k in ("LOL-v1 eval15", "LOL-v2-real test (unseen)", "Synthetic extreme-dark", "Synthetic non-uniform"):
     L.append(tbl(f"cabl/{k}", f"4.y Classical pipeline — remove one component — {k}"))
+try:
+    A = json.load(open(os.path.join(ROOT, "results", "artifact_metrics.json")))
+    L.append("## 4.z Over-exposure, colour shift and detail loss\n")
+    L.append("| Test set | Method | Over-exposed px introduced (%) ↓ | Colour ΔE2000 ↓ | Colour angle (°) ↓ | Edge corr. ↑ |")
+    L.append("|---|---|---:|---:|---:|---:|")
+    for sn, d in A.items():
+        for m, r in d.items():
+            L.append(f"| {sn} | {m} | {r['overexposed_pct']:.3f} | {r['deltaE2000']:.2f} | {r['colour_angle_deg']:.2f} | {r['edge_corr']:.3f} |")
+    L.append("")
+except FileNotFoundError:
+    pass
 L.append("## 5. Failure-case analysis\nSee `docs/ablation_and_failures.md` (worst cases, root causes, mitigations) and "
          "`docs/figures/failure_cases.png`.\n")
 path = os.path.join(ROOT, f"eval_{team['problem_id']}_{team['team_id']}.md")

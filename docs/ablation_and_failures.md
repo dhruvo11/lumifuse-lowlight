@@ -258,3 +258,44 @@ Halos are suppressed by the edge-aware guided-filter illumination and the curve 
 knee, but strong point lights in the real DICM/LIME photos still show glow spread after enhancement (light
 scattering in the original lens/sensor gets amplified with the shadows). Mitigation: protect regions with
 L > 0.9 from re-lighting entirely and add a glare-aware loss.
+
+## 5. Over-exposure, colour shift and detail loss (advanced requirement 4)
+
+Measured against the references with `scripts/artifact_metrics.py`. Over-exposure = % of pixels the method pushed
+into clipping (≥ 0.98) that are not clipped in the reference; colour shift = mean CIEDE2000 (includes brightness
+differences) and mean RGB-vector angle (pure hue/cast error, brightness-independent); detail loss = Sobel-gradient
+correlation with the reference.
+
+<!-- AUTO:artifacts -->
+| Test set | Method | Over-exposed px introduced (%) ↓ | Colour ΔE2000 ↓ | Colour angle (°) ↓ | Edge corr. ↑ |
+|---|---|---:|---:|---:|---:|
+| LOL-v1 eval15 | Classical only | 0.106 | 14.15 | 7.77 | 0.811 |
+| LOL-v1 eval15 | Zero-DCE (official weights) | 0.000 | 18.81 | 9.98 | **0.889** |
+| LOL-v1 eval15 | Deep learning only (LumiNet, no priors) | **0.000** | 13.28 | **6.80** | 0.864 |
+| LOL-v1 eval15 | **Hybrid — LumiFuse (proposed)** | 0.000 | **12.83** | 7.19 | 0.825 |
+| LOL-v2-real test (unseen) | Classical only | 0.004 | **12.83** | 7.56 | 0.777 |
+| LOL-v2-real test (unseen) | Zero-DCE (official weights) | 0.000 | 14.23 | 12.45 | **0.882** |
+| LOL-v2-real test (unseen) | Deep learning only (LumiNet, no priors) | 0.000 | 15.42 | **4.15** | 0.839 |
+| LOL-v2-real test (unseen) | **Hybrid — LumiFuse (proposed)** | **0.000** | 13.49 | 4.29 | 0.792 |
+| Synthetic moderate | Classical only | 0.003 | **10.96** | 4.82 | **0.873** |
+| Synthetic moderate | Zero-DCE (official weights) | **0.000** | 11.56 | 4.82 | 0.826 |
+| Synthetic moderate | Deep learning only (LumiNet, no priors) | 0.000 | 18.12 | 3.86 | 0.832 |
+| Synthetic moderate | **Hybrid — LumiFuse (proposed)** | 0.000 | 12.48 | **3.19** | 0.858 |
+| Synthetic extreme-dark | Classical only | **0.000** | 15.96 | **4.20** | 0.192 |
+| Synthetic extreme-dark | Zero-DCE (official weights) | 0.000 | 30.43 | 29.23 | 0.141 |
+| Synthetic extreme-dark | Deep learning only (LumiNet, no priors) | 0.000 | **15.75** | 7.71 | 0.372 |
+| Synthetic extreme-dark | **Hybrid — LumiFuse (proposed)** | 0.000 | 16.22 | 5.81 | **0.385** |
+| Synthetic non-uniform | Classical only | 0.072 | **11.78** | 4.40 | 0.856 |
+| Synthetic non-uniform | Zero-DCE (official weights) | **0.000** | 13.74 | 6.12 | 0.798 |
+| Synthetic non-uniform | Deep learning only (LumiNet, no priors) | 0.000 | 17.39 | 4.08 | 0.830 |
+| Synthetic non-uniform | **Hybrid — LumiFuse (proposed)** | 0.000 | 12.34 | **2.96** | **0.868** |
+<!-- /AUTO:artifacts -->
+
+**Reading.** *Over-exposure:* the hybrid introduces **no clipped pixels on any test set** (soft knee + curve
+formulation, which cannot exceed 1); the classical pipeline clips up to 0.11 % (its contrast stretch). *Colour
+cast:* the hybrid has the lowest hue error on moderate (3.19°) and non-uniform light (2.96°) and is within 0.4° of
+the best on LOL; official Zero-DCE has the largest casts (up to 29° on extreme-dark), which the colour-angle loss
+and colour gate remove. ΔE2000 also counts brightness, so it follows the exposure differences discussed in §4.1
+(classical is lowest on LOL-v2 / moderate / non-uniform). *Detail:* the hybrid keeps the most edge structure on
+extreme-dark and non-uniform inputs; on LOL, official Zero-DCE scores highest edge correlation because it does no
+denoising (noise and edges both survive) — the hybrid trades some fine texture for much lower noise (see noise σ).

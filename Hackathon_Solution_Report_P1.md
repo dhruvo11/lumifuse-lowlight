@@ -140,7 +140,11 @@ preservation: [`eval_P1_T81.md`](eval_P1_T81.md).
   bilateral on every set; **adaptive beats fixed parameters** by +1.5 to +2.2 dB on LOL and extreme-dark (fixed wins
   only on non-uniform PSNR, §4).
 
-Full tables (4 test sets × 8 hybrid variants, 4 × 7 classical variants) and rejected design alternatives:
+* Artefacts (advanced req. 4, `scripts/artifact_metrics.py`): the hybrid introduces **0 % newly clipped pixels** on
+  every test set (classical up to 0.11 %) and has the lowest hue error on moderate (3.19°) and non-uniform light
+  (2.96°); official Zero-DCE's colour casts reach 29° on extreme-dark inputs.
+
+Full tables (4 test sets × 9 hybrid variants, 4 × 7 classical variants), artefact metrics and rejected design alternatives:
 [`docs/ablation_and_failures.md`](docs/ablation_and_failures.md).
 
 ---

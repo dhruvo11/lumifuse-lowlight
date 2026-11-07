@@ -233,6 +233,35 @@ Measured on Apple M1 CPU, 4 threads, 600x400, mean of 15 LOL images after warm-u
 * *Latency.* 0.53 s per 600×400 frame on a laptop CPU (classical 0.06 s, curve-only networks ~0.3 s); the web app
   caps inputs at 768 px so a free 2-vCPU host answers in a few seconds.
 
+**Over-exposure, colour shift, detail loss** (advanced requirement 4; method in `ablation_and_failures.md` §5)
+<!-- AUTO:artifacts -->
+| Test set | Method | Over-exposed px introduced (%) ↓ | Colour ΔE2000 ↓ | Colour angle (°) ↓ | Edge corr. ↑ |
+|---|---|---:|---:|---:|---:|
+| LOL-v1 eval15 | Classical only | 0.106 | 14.15 | 7.77 | 0.811 |
+| LOL-v1 eval15 | Zero-DCE (official weights) | 0.000 | 18.81 | 9.98 | **0.889** |
+| LOL-v1 eval15 | Deep learning only (LumiNet, no priors) | **0.000** | 13.28 | **6.80** | 0.864 |
+| LOL-v1 eval15 | **Hybrid — LumiFuse (proposed)** | 0.000 | **12.83** | 7.19 | 0.825 |
+| LOL-v2-real test (unseen) | Classical only | 0.004 | **12.83** | 7.56 | 0.777 |
+| LOL-v2-real test (unseen) | Zero-DCE (official weights) | 0.000 | 14.23 | 12.45 | **0.882** |
+| LOL-v2-real test (unseen) | Deep learning only (LumiNet, no priors) | 0.000 | 15.42 | **4.15** | 0.839 |
+| LOL-v2-real test (unseen) | **Hybrid — LumiFuse (proposed)** | **0.000** | 13.49 | 4.29 | 0.792 |
+| Synthetic moderate | Classical only | 0.003 | **10.96** | 4.82 | **0.873** |
+| Synthetic moderate | Zero-DCE (official weights) | **0.000** | 11.56 | 4.82 | 0.826 |
+| Synthetic moderate | Deep learning only (LumiNet, no priors) | 0.000 | 18.12 | 3.86 | 0.832 |
+| Synthetic moderate | **Hybrid — LumiFuse (proposed)** | 0.000 | 12.48 | **3.19** | 0.858 |
+| Synthetic extreme-dark | Classical only | **0.000** | 15.96 | **4.20** | 0.192 |
+| Synthetic extreme-dark | Zero-DCE (official weights) | 0.000 | 30.43 | 29.23 | 0.141 |
+| Synthetic extreme-dark | Deep learning only (LumiNet, no priors) | 0.000 | **15.75** | 7.71 | 0.372 |
+| Synthetic extreme-dark | **Hybrid — LumiFuse (proposed)** | 0.000 | 16.22 | 5.81 | **0.385** |
+| Synthetic non-uniform | Classical only | 0.072 | **11.78** | 4.40 | 0.856 |
+| Synthetic non-uniform | Zero-DCE (official weights) | **0.000** | 13.74 | 6.12 | 0.798 |
+| Synthetic non-uniform | Deep learning only (LumiNet, no priors) | 0.000 | 17.39 | 4.08 | 0.830 |
+| Synthetic non-uniform | **Hybrid — LumiFuse (proposed)** | 0.000 | 12.34 | **2.96** | **0.868** |
+<!-- /AUTO:artifacts -->
+
+The hybrid introduces no clipped pixels on any set and has the lowest hue error on moderate and non-uniform light;
+ΔE2000 also counts brightness, so it mirrors the exposure ambiguity of §4.1.
+
 ### 3.2 Visual outputs & intermediate representations
 
 ![LOL comparison](figures/comparison_lol.png)
@@ -404,6 +433,6 @@ python run_inference.py --input_dir ./samples --output_dir ./results/inference -
 | Adv. 1 adaptive (not fixed) parameters | everything above | fixed-vs-adaptive ablation |
 | Adv. 2 compare ≥3 approaches | classical / Zero-DCE / DL-only / hybrid | §3.1 |
 | Adv. 3 ablation | 8 hybrid + 7 classical variants | §3.3 |
-| Adv. 4 minimise over-exposure, colour shift, detail loss | soft knee, colour-angle loss, colour gate, edge loss | §3, §4 |
+| Adv. 4 minimise over-exposure, colour shift, detail loss | soft knee, colour-angle loss, colour gate, edge loss | §3.1 artefact table (clipping %, ΔE2000, colour angle, edge corr.), §4 |
 | Adv. 5 unseen images | LOL-v2 (leak-free), synthetic, DICM/LIME | §3.1–3.2 |
 | Metrics: PSNR, SSIM, LPIPS, NIQE, latency, noise, edges | `lumifuse/metrics.py`, `scripts/evaluate.py` | eval file |

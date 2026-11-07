@@ -174,5 +174,30 @@ Latency column here is evaluation wall-clock (GPU/MPS), not the CPU benchmark.
 | - CLAHE | 16.66 | **0.7781** | 0.2556 | 5.291 | 118 | **0.0043** | 0.8787 |
 | - colour correction | 16.87 | 0.7570 | 0.2664 | 5.140 | 104 | 0.0091 | 0.8567 |
 
+## 4.z Over-exposure, colour shift and detail loss
+
+| Test set | Method | Over-exposed px introduced (%) ↓ | Colour ΔE2000 ↓ | Colour angle (°) ↓ | Edge corr. ↑ |
+|---|---|---:|---:|---:|---:|
+| LOL-v1 eval15 | Classical | 0.106 | 14.15 | 7.77 | 0.811 |
+| LOL-v1 eval15 | Zero-DCE (official, no fine-tune) | 0.000 | 18.81 | 9.98 | 0.889 |
+| LOL-v1 eval15 | DL-only (LumiNet w/o priors) | 0.000 | 13.28 | 6.80 | 0.864 |
+| LOL-v1 eval15 | Hybrid (LumiFuse, proposed) | 0.000 | 12.83 | 7.19 | 0.825 |
+| LOL-v2-real test (unseen) | Classical | 0.004 | 12.83 | 7.56 | 0.777 |
+| LOL-v2-real test (unseen) | Zero-DCE (official, no fine-tune) | 0.000 | 14.23 | 12.45 | 0.882 |
+| LOL-v2-real test (unseen) | DL-only (LumiNet w/o priors) | 0.000 | 15.42 | 4.15 | 0.839 |
+| LOL-v2-real test (unseen) | Hybrid (LumiFuse, proposed) | 0.000 | 13.49 | 4.29 | 0.792 |
+| Synthetic moderate | Classical | 0.003 | 10.96 | 4.82 | 0.873 |
+| Synthetic moderate | Zero-DCE (official, no fine-tune) | 0.000 | 11.56 | 4.82 | 0.826 |
+| Synthetic moderate | DL-only (LumiNet w/o priors) | 0.000 | 18.12 | 3.86 | 0.832 |
+| Synthetic moderate | Hybrid (LumiFuse, proposed) | 0.000 | 12.48 | 3.19 | 0.858 |
+| Synthetic extreme-dark | Classical | 0.000 | 15.96 | 4.20 | 0.192 |
+| Synthetic extreme-dark | Zero-DCE (official, no fine-tune) | 0.000 | 30.43 | 29.23 | 0.141 |
+| Synthetic extreme-dark | DL-only (LumiNet w/o priors) | 0.000 | 15.75 | 7.71 | 0.372 |
+| Synthetic extreme-dark | Hybrid (LumiFuse, proposed) | 0.000 | 16.22 | 5.81 | 0.385 |
+| Synthetic non-uniform | Classical | 0.072 | 11.78 | 4.40 | 0.856 |
+| Synthetic non-uniform | Zero-DCE (official, no fine-tune) | 0.000 | 13.74 | 6.12 | 0.798 |
+| Synthetic non-uniform | DL-only (LumiNet w/o priors) | 0.000 | 17.39 | 4.08 | 0.830 |
+| Synthetic non-uniform | Hybrid (LumiFuse, proposed) | 0.000 | 12.34 | 2.96 | 0.868 |
+
 ## 5. Failure-case analysis
 See `docs/ablation_and_failures.md` (worst cases, root causes, mitigations) and `docs/figures/failure_cases.png`.

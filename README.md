@@ -63,7 +63,8 @@ python scripts/train.py --variant hybrid
 python scripts/train.py --variant dlonly
 # 3. evaluate + tables + figures + eval file
 python scripts/evaluate.py && python scripts/evaluate.py --latency
-python scripts/summarize.py && python scripts/make_figures.py && python scripts/write_eval_md.py
+python scripts/summarize.py && python scripts/failure_analysis.py && python scripts/artifact_metrics.py
+python scripts/make_figures.py && python scripts/write_eval_md.py && python scripts/fill_docs.py
 python -m pytest -q tests           # robustness tests (odd sizes, gray/RGBA/16-bit, black/white frames)
 ```
 

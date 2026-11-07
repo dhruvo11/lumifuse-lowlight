@@ -100,7 +100,25 @@ def report_table(sname):
     return "\n".join(out)
 
 
+def artifacts_table():
+    try:
+        A = json.load(open(os.path.join(ROOT, "results", "artifact_metrics.json")))
+    except Exception:
+        return "_not available_"
+    out = ["| Test set | Method | Over-exposed px introduced (%) ↓ | Colour ΔE2000 ↓ | Colour angle (°) ↓ | Edge corr. ↑ |",
+           "|---|---|---:|---:|---:|---:|"]
+    for s, d in A.items():
+        best = {k: (max if k == "edge_corr" else min)(d, key=lambda m: d[m][k]) for k in
+                ("overexposed_pct", "deltaE2000", "colour_angle_deg", "edge_corr")}
+        for m, r in d.items():
+            cell = lambda k, f: (f"**{r[k]:{f}}**" if best[k] == m else f"{r[k]:{f}}")
+            out.append(f"| {s} | {SHORT.get(m, m)} | {cell('overexposed_pct', '.3f')} | {cell('deltaE2000', '.2f')} | "
+                       f"{cell('colour_angle_deg', '.2f')} | {cell('edge_corr', '.3f')} |")
+    return "\n".join(out)
+
+
 BLOCKS = {
+    "artifacts": artifacts_table,
     "report_lolv1": lambda: report_table("LOL-v1 eval15"),
     "report_lolv2": lambda: report_table("LOL-v2-real test (unseen)"),
     "report_ext": lambda: report_table("Synthetic extreme-dark"),

@@ -1,0 +1,152 @@
+{
+ "LOL-v1 eval15": {
+  "Classical": {
+   "overexposed_pct": 0.10625,
+   "deltaE2000": 14.149094835917156,
+   "colour_angle_deg": 7.766247940063477,
+   "edge_corr": 0.8105377166592463,
+   "n": 15
+  },
+  "Zero-DCE (official, no fine-tune)": {
+   "overexposed_pct": 2.777777777777778e-05,
+   "deltaE2000": 18.8142453511556,
+   "colour_angle_deg": 9.982969601949057,
+   "edge_corr": 0.8893469067077773,
+   "n": 15
+  },
+  "DL-only (LumiNet w/o priors)": {
+   "overexposed_pct": 0.0,
+   "deltaE2000": 13.282004197438559,
+   "colour_angle_deg": 6.800437156359354,
+   "edge_corr": 0.8636959097818323,
+   "n": 15
+  },
+  "Hybrid (LumiFuse, proposed)": {
+   "overexposed_pct": 0.0,
+   "deltaE2000": 12.829787381490071,
+   "colour_angle_deg": 7.193190026283264,
+   "edge_corr": 0.8251060056897266,
+   "n": 15
+  }
+ },
+ "LOL-v2-real test (unseen)": {
+  "Classical": {
+   "overexposed_pct": 0.0040999999999999995,
+   "deltaE2000": 12.827166137695313,
+   "colour_angle_deg": 7.563099660873413,
+   "edge_corr": 0.7769054976869121,
+   "n": 100
+  },
+  "Zero-DCE (official, no fine-tune)": {
+   "overexposed_pct": 0.0004791666666666667,
+   "deltaE2000": 14.227348971366883,
+   "colour_angle_deg": 12.447985389232635,
+   "edge_corr": 0.881775662971075,
+   "n": 100
+  },
+  "DL-only (LumiNet w/o priors)": {
+   "overexposed_pct": 5.416666666666667e-05,
+   "deltaE2000": 15.42375283241272,
+   "colour_angle_deg": 4.148129520416259,
+   "edge_corr": 0.8392219173163563,
+   "n": 100
+  },
+  "Hybrid (LumiFuse, proposed)": {
+   "overexposed_pct": 0.0,
+   "deltaE2000": 13.489299988746643,
+   "colour_angle_deg": 4.293313125371933,
+   "edge_corr": 0.7921732162376236,
+   "n": 100
+  }
+ },
+ "Synthetic moderate": {
+  "Classical": {
+   "overexposed_pct": 0.0034583333333333332,
+   "deltaE2000": 10.961314328511556,
+   "colour_angle_deg": 4.82402536869049,
+   "edge_corr": 0.8733014832250875,
+   "n": 30
+  },
+  "Zero-DCE (official, no fine-tune)": {
+   "overexposed_pct": 0.0,
+   "deltaE2000": 11.559552097320557,
+   "colour_angle_deg": 4.820491019884745,
+   "edge_corr": 0.8262146108867149,
+   "n": 30
+  },
+  "DL-only (LumiNet w/o priors)": {
+   "overexposed_pct": 0.0,
+   "deltaE2000": 18.12016944885254,
+   "colour_angle_deg": 3.8616001923878986,
+   "edge_corr": 0.8316516512612119,
+   "n": 30
+  },
+  "Hybrid (LumiFuse, proposed)": {
+   "overexposed_pct": 0.0,
+   "deltaE2000": 12.47755831082662,
+   "colour_angle_deg": 3.189406633377075,
+   "edge_corr": 0.8580347080409503,
+   "n": 30
+  }
+ },
+ "Synthetic extreme-dark": {
+  "Classical": {
+   "overexposed_pct": 0.0,
+   "deltaE2000": 15.963896020253499,
+   "colour_angle_deg": 4.200137440363566,
+   "edge_corr": 0.1923098201365788,
+   "n": 30
+  },
+  "Zero-DCE (official, no fine-tune)": {
+   "overexposed_pct": 0.0,
+   "deltaE2000": 30.428232383728027,
+   "colour_angle_deg": 29.233137067159017,
+   "edge_corr": 0.14063300153972577,
+   "n": 30
+  },
+  "DL-only (LumiNet w/o priors)": {
+   "overexposed_pct": 0.0,
+   "deltaE2000": 15.749565505981446,
+   "colour_angle_deg": 7.709789339701334,
+   "edge_corr": 0.3716264217707588,
+   "n": 30
+  },
+  "Hybrid (LumiFuse, proposed)": {
+   "overexposed_pct": 0.0,
+   "deltaE2000": 16.218874327341716,
+   "colour_angle_deg": 5.809640884399414,
+   "edge_corr": 0.3846173695738331,
+   "n": 30
+  }
+ },
+ "Synthetic non-uniform": {
+  "Classical": {
+   "overexposed_pct": 0.07163888888888888,
+   "deltaE2000": 11.781984297434489,
+   "colour_angle_deg": 4.404390756289164,
+   "edge_corr": 0.856487845102316,
+   "n": 30
+  },
+  "Zero-DCE (official, no fine-tune)": {
+   "overexposed_pct": 0.0,
+   "deltaE2000": 13.741794141133626,
+   "colour_angle_deg": 6.122479669253031,
+   "edge_corr": 0.7979712057511565,
+   "n": 30
+  },
+  "DL-only (LumiNet w/o priors)": {
+   "overexposed_pct": 0.0,
+   "deltaE2000": 17.389950784047446,
+   "colour_angle_deg": 4.079767719904582,
+   "edge_corr": 0.8303350926806483,
+   "n": 30
+  },
+  "Hybrid (LumiFuse, proposed)": {
+   "overexposed_pct": 0.0,
+   "deltaE2000": 12.336647939682006,
+   "colour_angle_deg": 2.964410980542501,
+   "edge_corr": 0.8679018558508227,
+   "n": 30
+  }
+ }
+}
