@@ -1,0 +1,17 @@
+{
+  "problem_id": "P1",
+  "team_id": "TXX",
+  "team_name": "TEAM_NAME",
+  "members": [
+    {
+      "name": "Dhruv S P",
+      "usn": "USN1"
+    },
+    {
+      "name": "Harshit Rudresh",
+      "usn": "USN2"
+    }
+  ],
+  "github_url": "https://github.com/<user>/lumifuse-lowlight",
+  "live_url": "https://huggingface.co/spaces/dhruvspo1/lumifuse"
+}

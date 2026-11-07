@@ -1,0 +1,22 @@
+{
+ "device": "Apple M1 CPU, 4 threads",
+ "resolution": "600x400",
+ "results": {
+  "Classical": {
+   "mean_ms": 63.73473880812526,
+   "std_ms": 1.729416785515234
+  },
+  "Zero-DCE (official, no fine-tune)": {
+   "mean_ms": 275.95526395210373,
+   "std_ms": 7.550952906662645
+  },
+  "DL-only (LumiNet w/o priors)": {
+   "mean_ms": 307.9384946031496,
+   "std_ms": 9.74372135454539
+  },
+  "Hybrid (LumiFuse, proposed)": {
+   "mean_ms": 529.2669637671983,
+   "std_ms": 9.418042826752743
+  }
+ }
+}

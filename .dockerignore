@@ -1,0 +1,8 @@
+.venv
+data
+results/raw
+results/outputs
+results/*.out
+__pycache__
+*.pyc
+.git

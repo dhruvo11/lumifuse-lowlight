@@ -1,0 +1,7 @@
+# Streamlit Community Cloud runtime (CPU-only torch wheels keep the install small)
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch>=2.2
+numpy>=1.26
+opencv-python-headless>=4.9
+scipy>=1.11
+streamlit>=1.40

@@ -1,0 +1,7 @@
+# Runtime (web app + inference). CPU-only torch wheels keep the image small.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch>=2.2
+numpy>=1.26
+opencv-python-headless>=4.9
+scipy>=1.11
+gradio==6.31.0

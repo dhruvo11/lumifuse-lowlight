@@ -1,0 +1,175 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 760" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#334155"/>
+    </marker>
+    <style>
+      .box{stroke:#334155;stroke-width:1.3;rx:8}
+      .t{font-weight:700;font-size:13.5px;fill:#0f172a}
+      .s{font-size:11.5px;fill:#334155}
+      .m{font-family:Menlo,Consolas,monospace;font-size:10.5px;fill:#475569}
+      .lane{font-weight:700;font-size:15px}
+      .ln{stroke:#334155;stroke-width:1.4;fill:none;marker-end:url(#arr)}
+      .dash{stroke:#64748b;stroke-width:1.2;fill:none;stroke-dasharray:5 4;marker-end:url(#arr)}
+    </style>
+  </defs>
+  <rect width="1280" height="760" fill="#ffffff"/>
+  <text x="640" y="30" text-anchor="middle" font-size="19" font-weight="700" fill="#0f172a">LumiFuse — system architecture (inference path, lumifuse/pipeline.py · LumiFuse.hybrid)</text>
+
+  <!-- input + analysis -->
+  <rect class="box" x="20" y="300" width="130" height="80" fill="#f1f5f9"/>
+  <text class="t" x="85" y="330" text-anchor="middle">Low-light input</text>
+  <text class="s" x="85" y="348" text-anchor="middle">any size, RGB</text>
+  <text class="m" x="85" y="366" text-anchor="middle">utils.to_float_rgb</text>
+
+  <rect class="box" x="180" y="270" width="185" height="140" fill="#fef3c7"/>
+  <text class="t" x="272" y="295" text-anchor="middle">1 · Image analysis</text>
+  <text class="s" x="272" y="315" text-anchor="middle">brightness, dark/bright fraction</text>
+  <text class="s" x="272" y="332" text-anchor="middle">noise σ (Immerkær, flat px)</text>
+  <text class="s" x="272" y="349" text-anchor="middle">illumination non-uniformity</text>
+  <text class="s" x="272" y="366" text-anchor="middle">colour cast → condition label</text>
+  <text class="m" x="272" y="392" text-anchor="middle">quality.analyze / classify</text>
+  <path class="ln" d="M150,340 L178,340"/>
+
+  <!-- classical lane -->
+  <text class="lane" x="400" y="72" fill="#b45309">CLASSICAL BRANCH · lumifuse/classical.py · enhance_classical()</text>
+  <rect x="395" y="82" width="865" height="150" rx="10" fill="#fffbeb" stroke="#f59e0b" stroke-dasharray="6 4"/>
+  <g>
+    <rect class="box" x="410" y="100" width="150" height="115" fill="#ffffff"/>
+    <text class="t" x="485" y="122" text-anchor="middle">Retinex: I = R·L</text>
+    <text class="s" x="485" y="141" text-anchor="middle">L = guided filter of</text>
+    <text class="s" x="485" y="157" text-anchor="middle">max(R,G,B); r, ε adaptive</text>
+    <text class="s" x="485" y="173" text-anchor="middle">re-light L' = L^g,</text>
+    <text class="s" x="485" y="189" text-anchor="middle">g = ln 0.45 / ln mean(L)</text>
+    <text class="m" x="485" y="207" text-anchor="middle">estimate_illumination</text>
+
+    <rect class="box" x="578" y="100" width="150" height="115" fill="#ffffff"/>
+    <text class="t" x="653" y="122" text-anchor="middle">Gain-aware denoise</text>
+    <text class="s" x="653" y="141" text-anchor="middle">guided (or bilateral) on Y,</text>
+    <text class="s" x="653" y="157" text-anchor="middle">joint-guided on Cr/Cb;</text>
+    <text class="s" x="653" y="173" text-anchor="middle">ε = (k·σ)², weight ∝ gain</text>
+    <text class="s" x="653" y="189" text-anchor="middle">L'/L (noise amplification)</text>
+    <text class="m" x="653" y="207" text-anchor="middle">utils.guided_filter</text>
+
+    <rect class="box" x="746" y="100" width="150" height="115" fill="#ffffff"/>
+    <text class="t" x="821" y="122" text-anchor="middle">Adaptive CLAHE</text>
+    <text class="s" x="821" y="141" text-anchor="middle">on LAB lightness;</text>
+    <text class="s" x="821" y="157" text-anchor="middle">clip limit from measured</text>
+    <text class="s" x="821" y="173" text-anchor="middle">contrast, blend from</text>
+    <text class="s" x="821" y="189" text-anchor="middle">noise level, tiles by size</text>
+    <text class="m" x="821" y="207" text-anchor="middle">cv2.createCLAHE</text>
+
+    <rect class="box" x="914" y="100" width="150" height="115" fill="#ffffff"/>
+    <text class="t" x="989" y="122" text-anchor="middle">Colour correction</text>
+    <text class="s" x="989" y="141" text-anchor="middle">gray-world WB, strength</text>
+    <text class="s" x="989" y="157" text-anchor="middle">∝ measured cast;</text>
+    <text class="s" x="989" y="173" text-anchor="middle">saturation compensation</text>
+    <text class="s" x="989" y="189" text-anchor="middle">∝ desaturation</text>
+    <text class="m" x="989" y="207" text-anchor="middle">HSV / channel gains</text>
+
+    <rect class="box" x="1082" y="100" width="165" height="115" fill="#ffffff"/>
+    <text class="t" x="1164" y="122" text-anchor="middle">Contrast + highlights</text>
+    <text class="s" x="1164" y="141" text-anchor="middle">percentile stretch (≤1.3×)</text>
+    <text class="s" x="1164" y="157" text-anchor="middle">soft-knee roll-off above</text>
+    <text class="s" x="1164" y="173" text-anchor="middle">0.88 → no hard clipping,</text>
+    <text class="s" x="1164" y="189" text-anchor="middle">no over-exposure</text>
+    <text class="m" x="1164" y="207" text-anchor="middle">soft_knee</text>
+    <path class="ln" d="M560,157 L576,157"/><path class="ln" d="M728,157 L744,157"/>
+    <path class="ln" d="M896,157 L912,157"/><path class="ln" d="M1064,157 L1080,157"/>
+  </g>
+  <path class="ln" d="M272,270 L272,157 L408,157"/>
+  <text class="s" x="282" y="205">adaptive params</text>
+
+  <!-- deep lane -->
+  <text class="lane" x="400" y="268" fill="#1d4ed8">DEEP BRANCH · lumifuse/models.py · LumiNet(use_prior=True)</text>
+  <rect x="395" y="278" width="865" height="170" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-dasharray="6 4"/>
+  <rect class="box" x="410" y="300" width="140" height="130" fill="#ffffff"/>
+  <text class="t" x="480" y="322" text-anchor="middle">2 · Input</text>
+  <text class="t" x="480" y="339" text-anchor="middle">conditioning</text>
+  <text class="s" x="480" y="360" text-anchor="middle">rescale exposure into</text>
+  <text class="s" x="480" y="376" text-anchor="middle">training band [0.03, 0.06]</text>
+  <text class="s" x="480" y="392" text-anchor="middle">(×4 up … ×0.1 down)</text>
+  <text class="m" x="480" y="418" text-anchor="middle">pipeline.hybrid</text>
+
+  <rect class="box" x="568" y="300" width="150" height="130" fill="#ffffff"/>
+  <text class="t" x="643" y="322" text-anchor="middle">Classical prior L</text>
+  <text class="s" x="643" y="342" text-anchor="middle">same Retinex illumination</text>
+  <text class="s" x="643" y="358" text-anchor="middle">estimate, in torch</text>
+  <text class="s" x="643" y="374" text-anchor="middle">(max-RGB + guided filter)</text>
+  <text class="s" x="643" y="390" text-anchor="middle">fed as 4th input channel</text>
+  <text class="m" x="643" y="418" text-anchor="middle">illumination_prior</text>
+
+  <rect class="box" x="736" y="300" width="160" height="130" fill="#ffffff"/>
+  <text class="t" x="816" y="322" text-anchor="middle">IG-DCE-Net (Zero-DCE)</text>
+  <text class="s" x="816" y="342" text-anchor="middle">7-conv, 80k params,</text>
+  <text class="s" x="816" y="358" text-anchor="middle">[RGB, L] → 24 curve maps;</text>
+  <text class="s" x="816" y="374" text-anchor="middle">8× LE(x)=x+αx(1−x)</text>
+  <text class="s" x="816" y="390" text-anchor="middle">curves at ½ res (DCE++)</text>
+  <text class="m" x="816" y="418" text-anchor="middle">DCENet (init: official)</text>
+
+  <rect class="box" x="914" y="300" width="150" height="130" fill="#ffffff"/>
+  <text class="t" x="989" y="322" text-anchor="middle">Gain map G</text>
+  <text class="s" x="989" y="342" text-anchor="middle">G = Y(enhanced)/Y(input)</text>
+  <text class="s" x="989" y="358" text-anchor="middle">= local noise</text>
+  <text class="s" x="989" y="374" text-anchor="middle">amplification factor</text>
+  <text class="s" x="989" y="390" text-anchor="middle">(classical noise model)</text>
+  <text class="m" x="989" y="418" text-anchor="middle">LumiNet.forward</text>
+
+  <rect class="box" x="1082" y="300" width="165" height="130" fill="#ffffff"/>
+  <text class="t" x="1164" y="322" text-anchor="middle">RefineNet (U-Net)</text>
+  <text class="s" x="1164" y="342" text-anchor="middle">[E, L, log G] → residual;</text>
+  <text class="s" x="1164" y="358" text-anchor="middle">denoise + colour fix,</text>
+  <text class="s" x="1164" y="374" text-anchor="middle">0.93M params, 3 levels</text>
+  <text class="s" x="1164" y="390" text-anchor="middle">L1+SSIM+Sobel+colour loss</text>
+  <text class="m" x="1164" y="418" text-anchor="middle">RefineNet</text>
+  <path class="ln" d="M550,365 L566,365"/><path class="ln" d="M718,365 L734,365"/>
+  <path class="ln" d="M896,365 L912,365"/><path class="ln" d="M1064,365 L1080,365"/>
+  <path class="ln" d="M365,365 L408,365"/>
+
+  <!-- fusion lane -->
+  <text class="lane" x="400" y="490" fill="#047857">ADAPTIVE FUSION + QUALITY GATES · lumifuse/pipeline.py</text>
+  <rect x="395" y="500" width="865" height="150" rx="10" fill="#ecfdf5" stroke="#10b981" stroke-dasharray="6 4"/>
+  <rect class="box" x="1060" y="518" width="187" height="115" fill="#ffffff"/>
+  <text class="t" x="1153" y="540" text-anchor="middle">3 · Reliability fusion</text>
+  <text class="s" x="1153" y="558" text-anchor="middle">per pixel: net too dark /</text>
+  <text class="s" x="1153" y="573" text-anchor="middle">blown out → classical;</text>
+  <text class="s" x="1153" y="588" text-anchor="middle">global β ↑ with input</text>
+  <text class="s" x="1153" y="603" text-anchor="middle">brightness (0.12→0.40)</text>
+  <text class="s" x="1153" y="618" text-anchor="middle">W = max(blur(·), β)</text>
+  <text class="m" x="1153" y="630" text-anchor="middle">out = (1−W)·DL + W·CL</text>
+
+  <rect class="box" x="820" y="518" width="210" height="115" fill="#ffffff"/>
+  <text class="t" x="925" y="540" text-anchor="middle">4 · No-reference quality gates</text>
+  <text class="s" x="925" y="560" text-anchor="middle">exposure ∉ [0.30, 0.62] → γ fix</text>
+  <text class="s" x="925" y="576" text-anchor="middle">residual noise σ &gt; 0.012 →</text>
+  <text class="s" x="925" y="592" text-anchor="middle">guided-filter denoise</text>
+  <text class="s" x="925" y="608" text-anchor="middle">colour cast &gt; 0.10 → partial WB</text>
+  <text class="m" x="925" y="626" text-anchor="middle">quality.estimate_noise</text>
+
+  <rect class="box" x="600" y="518" width="190" height="115" fill="#ffffff"/>
+  <text class="t" x="695" y="540" text-anchor="middle">5 · Highlight protection</text>
+  <text class="s" x="695" y="560" text-anchor="middle">soft knee (0.88) keeps</text>
+  <text class="s" x="695" y="576" text-anchor="middle">bright regions of backlit</text>
+  <text class="s" x="695" y="592" text-anchor="middle">scenes from clipping;</text>
+  <text class="s" x="695" y="608" text-anchor="middle">well-lit input → light touch</text>
+  <text class="m" x="695" y="626" text-anchor="middle">classical.soft_knee</text>
+
+  <rect class="box" x="410" y="518" width="160" height="115" fill="#f1f5f9"/>
+  <text class="t" x="490" y="545" text-anchor="middle">Enhanced output</text>
+  <text class="s" x="490" y="567" text-anchor="middle">+ intermediate maps</text>
+  <text class="s" x="490" y="583" text-anchor="middle">(L, R, |A|, G, refiner Δ,</text>
+  <text class="s" x="490" y="599" text-anchor="middle">fusion W) + decisions</text>
+  <text class="s" x="490" y="615" text-anchor="middle">+ per-stage latency</text>
+
+  <path class="ln" d="M1247,365 L1262,365 L1262,575 L1249,575"/>
+  <text class="s" x="1200" y="470">DL output</text>
+  <path class="ln" d="M1247,157 L1270,157 L1270,545 L1249,545"/>
+  <text class="s" x="1180" y="250">classical output</text>
+  <path class="ln" d="M1060,575 L1032,575"/><path class="ln" d="M820,575 L792,575"/><path class="ln" d="M600,575 L572,575"/>
+
+  <!-- offline -->
+  <rect x="20" y="675" width="1240" height="70" rx="10" fill="#f8fafc" stroke="#94a3b8"/>
+  <text class="t" x="35" y="698">Offline</text>
+  <text class="s" x="35" y="718">scripts/prepare_data.py: LOL-v1 + LOL-v2-real pool, removes 98 test-leaking and 399 duplicate pairs → 644 train / 33 val.   scripts/train.py: init from official Zero-DCE, fine-tune on LOL (MPS).</text>
+  <text class="s" x="35" y="736">scripts/evaluate.py: 4 methods × 6 test sets + 15 ablation variants (PSNR, SSIM, LPIPS, NIQE, latency, noise σ, edge corr.).   webapp/streamlit_app.py: web UI on Streamlit Community Cloud (CPU) · app.py (Gradio) + Dockerfile for local.</text>
+</svg>

@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+data/
+results/outputs/
+results/*.out
+results/inference/
+.gradio/
+flagged/
+.claude/
+gh_login.log

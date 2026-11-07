@@ -1,0 +1,88 @@
+it 50 loss 0.6659 main 0.4343 dce 0.2316 0.479s/it
+it 100 loss 0.4011 main 0.2876 dce 0.1135 0.469s/it
+it 150 loss 0.5525 main 0.3871 dce 0.1654 0.495s/it
+it 200 loss 0.4061 main 0.2669 dce 0.1391 0.492s/it
+it 250 loss 0.4712 main 0.3187 dce 0.1524 0.488s/it
+it 300 loss 0.3756 main 0.2606 dce 0.1150 0.514s/it
+it 350 loss 0.5090 main 0.3599 dce 0.1491 0.576s/it
+it 400 loss 0.4263 main 0.2743 dce 0.1520 0.571s/it
+it 450 loss 0.4505 main 0.3202 dce 0.1303 0.586s/it
+it 500 loss 0.5066 main 0.3396 dce 0.1669 0.626s/it
+VAL it 500 psnr 14.962 (best 14.962)
+it 550 loss 0.3898 main 0.2670 dce 0.1227 0.678s/it
+it 600 loss 0.5599 main 0.3677 dce 0.1922 0.726s/it
+it 650 loss 0.4066 main 0.2701 dce 0.1364 0.755s/it
+it 700 loss 0.3398 main 0.2309 dce 0.1089 0.763s/it
+it 750 loss 0.3530 main 0.2316 dce 0.1215 0.772s/it
+it 800 loss 0.4101 main 0.2788 dce 0.1313 0.784s/it
+it 850 loss 0.4202 main 0.2834 dce 0.1368 0.785s/it
+it 900 loss 0.4033 main 0.2402 dce 0.1631 0.787s/it
+it 950 loss 0.3927 main 0.2568 dce 0.1359 0.787s/it
+it 1000 loss 0.4080 main 0.2681 dce 0.1399 0.786s/it
+VAL it 1000 psnr 16.576 (best 16.576)
+it 1050 loss 0.4524 main 0.2814 dce 0.1711 0.788s/it
+it 1100 loss 0.4449 main 0.2738 dce 0.1710 0.784s/it
+it 1150 loss 0.2781 main 0.1631 dce 0.1150 0.779s/it
+it 1200 loss 0.3284 main 0.2085 dce 0.1199 0.775s/it
+it 1250 loss 0.4159 main 0.2354 dce 0.1805 0.769s/it
+it 1300 loss 0.3400 main 0.2001 dce 0.1399 0.776s/it
+it 1350 loss 0.4067 main 0.2254 dce 0.1813 0.787s/it
+it 1400 loss 0.4335 main 0.2559 dce 0.1776 0.789s/it
+it 1450 loss 0.3430 main 0.2082 dce 0.1348 0.791s/it
+it 1500 loss 0.3622 main 0.2191 dce 0.1430 0.793s/it
+VAL it 1500 psnr 17.515 (best 17.515)
+it 1550 loss 0.3746 main 0.2256 dce 0.1489 0.796s/it
+it 1600 loss 0.3407 main 0.2083 dce 0.1324 0.794s/it
+it 1650 loss 0.3368 main 0.2153 dce 0.1214 0.791s/it
+it 1700 loss 0.3521 main 0.2244 dce 0.1277 0.790s/it
+it 1750 loss 0.3144 main 0.1950 dce 0.1194 0.790s/it
+it 1800 loss 0.3276 main 0.1939 dce 0.1337 0.793s/it
+it 1850 loss 0.3293 main 0.1886 dce 0.1407 0.806s/it
+it 1900 loss 0.2970 main 0.1722 dce 0.1248 0.805s/it
+it 1950 loss 0.2346 main 0.1446 dce 0.0901 0.806s/it
+it 2000 loss 0.2614 main 0.1578 dce 0.1036 0.820s/it
+VAL it 2000 psnr 18.189 (best 18.189)
+it 2050 loss 0.3641 main 0.2103 dce 0.1538 0.828s/it
+it 2100 loss 0.3561 main 0.2071 dce 0.1490 0.825s/it
+it 2150 loss 0.3299 main 0.2041 dce 0.1258 0.817s/it
+it 2200 loss 0.3461 main 0.2022 dce 0.1440 0.811s/it
+it 2250 loss 0.2904 main 0.1670 dce 0.1234 0.806s/it
+it 2300 loss 0.2939 main 0.1852 dce 0.1087 0.801s/it
+it 2350 loss 0.3018 main 0.1791 dce 0.1227 0.796s/it
+it 2400 loss 0.3402 main 0.1982 dce 0.1420 0.792s/it
+it 2450 loss 0.2858 main 0.1695 dce 0.1163 0.789s/it
+it 2500 loss 0.2671 main 0.1578 dce 0.1093 0.786s/it
+VAL it 2500 psnr 17.684 (best 18.189)
+it 2550 loss 0.3228 main 0.1848 dce 0.1379 0.785s/it
+it 2600 loss 0.2852 main 0.1605 dce 0.1247 0.781s/it
+it 2650 loss 0.2772 main 0.1536 dce 0.1236 0.778s/it
+it 2700 loss 0.2483 main 0.1475 dce 0.1008 0.774s/it
+it 2750 loss 0.2564 main 0.1503 dce 0.1061 0.770s/it
+it 2800 loss 0.2208 main 0.1208 dce 0.0999 0.765s/it
+it 2850 loss 0.2413 main 0.1434 dce 0.0979 0.760s/it
+it 2900 loss 0.3442 main 0.1915 dce 0.1527 0.755s/it
+it 2950 loss 0.2662 main 0.1532 dce 0.1130 0.751s/it
+it 3000 loss 0.2557 main 0.1494 dce 0.1064 0.746s/it
+VAL it 3000 psnr 17.881 (best 18.189)
+it 3050 loss 0.3100 main 0.1719 dce 0.1381 0.742s/it
+it 3100 loss 0.2673 main 0.1551 dce 0.1122 0.736s/it
+it 3150 loss 0.2814 main 0.1610 dce 0.1204 0.731s/it
+it 3200 loss 0.3990 main 0.2378 dce 0.1612 0.725s/it
+it 3250 loss 0.3412 main 0.1933 dce 0.1480 0.720s/it
+it 3300 loss 0.3057 main 0.1632 dce 0.1425 0.715s/it
+it 3350 loss 0.2929 main 0.1675 dce 0.1253 0.710s/it
+it 3400 loss 0.2691 main 0.1581 dce 0.1110 0.705s/it
+it 3450 loss 0.3401 main 0.1927 dce 0.1474 0.700s/it
+it 3500 loss 0.2600 main 0.1481 dce 0.1119 0.695s/it
+VAL it 3500 psnr 17.999 (best 18.189)
+it 3550 loss 0.2512 main 0.1391 dce 0.1121 0.692s/it
+it 3600 loss 0.3357 main 0.1936 dce 0.1421 0.687s/it
+it 3650 loss 0.2123 main 0.1239 dce 0.0884 0.683s/it
+it 3700 loss 0.3722 main 0.2128 dce 0.1594 0.680s/it
+it 3750 loss 0.2783 main 0.1627 dce 0.1156 0.676s/it
+it 3800 loss 0.2512 main 0.1423 dce 0.1089 0.674s/it
+it 3850 loss 0.3108 main 0.1712 dce 0.1395 0.674s/it
+it 3900 loss 0.2644 main 0.1504 dce 0.1140 0.672s/it
+it 3950 loss 0.3694 main 0.1947 dce 0.1748 0.670s/it
+it 4000 loss 0.3743 main 0.2070 dce 0.1673 0.668s/it
+VAL it 4000 psnr 18.144 (best 18.189)
