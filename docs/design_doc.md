@@ -432,7 +432,7 @@ python run_inference.py --input_dir ./samples --output_dir ./results/inference -
 | C. Extremely dark & non-uniform inputs | input conditioning, soft knee, reliability "over" term | synthetic extreme / non-uniform tables |
 | Adv. 1 adaptive (not fixed) parameters | everything above | fixed-vs-adaptive ablation |
 | Adv. 2 compare ≥3 approaches | classical / Zero-DCE / DL-only / hybrid | §3.1 |
-| Adv. 3 ablation | 8 hybrid + 7 classical variants | §3.3 |
+| Adv. 3 ablation | 9 hybrid + 7 classical variants on 4 test sets | §3.3 |
 | Adv. 4 minimise over-exposure, colour shift, detail loss | soft knee, colour-angle loss, colour gate, edge loss | §3.1 artefact table (clipping %, ΔE2000, colour angle, edge corr.), §4 |
 | Adv. 5 unseen images | LOL-v2 (leak-free), synthetic, DICM/LIME | §3.1–3.2 |
 | Metrics: PSNR, SSIM, LPIPS, NIQE, latency, noise, edges | `lumifuse/metrics.py`, `scripts/evaluate.py` | eval file |

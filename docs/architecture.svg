@@ -171,5 +171,5 @@
   <rect x="20" y="675" width="1240" height="70" rx="10" fill="#f8fafc" stroke="#94a3b8"/>
   <text class="t" x="35" y="698">Offline</text>
   <text class="s" x="35" y="718">scripts/prepare_data.py: LOL-v1 + LOL-v2-real pool, removes 98 test-leaking and 399 duplicate pairs → 644 train / 33 val.   scripts/train.py: init from official Zero-DCE, fine-tune on LOL (MPS).</text>
-  <text class="s" x="35" y="736">scripts/evaluate.py: 4 methods × 6 test sets + 15 ablation variants (PSNR, SSIM, LPIPS, NIQE, latency, noise σ, edge corr.).   webapp/streamlit_app.py: web UI on Streamlit Community Cloud (CPU) · app.py (Gradio) + Dockerfile for local.</text>
+  <text class="s" x="35" y="736">scripts/evaluate.py: 4 methods × 6 test sets + 16 ablation variants (PSNR, SSIM, LPIPS, NIQE, latency, noise σ, edge corr.).   webapp/streamlit_app.py: web UI on Streamlit Community Cloud (CPU) · app.py (Gradio) + Dockerfile for local.</text>
 </svg>
