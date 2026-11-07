@@ -4,7 +4,7 @@
 | :--- | :--- |
 | **Problem ID** | P1 |
 | **Problem Title** | Robust Low-Light Image Restoration and Enhancement |
-| **Team** | TXX · TEAM_NAME · Dhruv S P (USN1), Harshit Rudresh (USN2) |
+| **Team** | T81 · Bugweiser · Dhruv S P (1RUA24CSE0133), Harshit Rudresh (1RUA24CSE0157) |
 | **Repository** | https://github.com/dhruvo11/lumifuse-lowlight |
 | **Live demo** | https://lumifuse.streamlit.app |
 

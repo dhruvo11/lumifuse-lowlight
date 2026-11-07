@@ -1,6 +1,6 @@
-USN1,USN2
+1RUA24CSE0133,1RUA24CSE0157
 
-# Evaluation results — P1 Robust Low-Light Image Restoration — Team TXX (TEAM_NAME)
+# Evaluation results — P1 Robust Low-Light Image Restoration — Team T81 (Bugweiser)
 
 System: **LumiFuse** (classical Retinex/CLAHE/guided-filter pipeline + illumination-guided Zero-DCE network + reliability-weighted fusion). All numbers are produced by `python scripts/evaluate.py && python scripts/summarize.py`.
 

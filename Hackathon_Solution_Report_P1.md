@@ -4,8 +4,8 @@
 | :--- | :--- |
 | **Problem ID** | `P1` |
 | **Problem Title** | `Robust Low-Light Image Restoration and Enhancement` |
-| **Team Name** | `TEAM_NAME` (Team ID `TXX`) |
-| **Team Members** | Dhruv S P — USN1<br>Harshit Rudresh — USN2 |
+| **Team Name** | `Bugweiser` (Team ID `T81`) |
+| **Team Members** | Dhruv S P — 1RUA24CSE0133<br>Harshit Rudresh — 1RUA24CSE0157 |
 | **GitHub Repository** | https://github.com/dhruvo11/lumifuse-lowlight — evaluated commit `9761bd9` |
 | **Live Demo / Deployment** | https://lumifuse.streamlit.app (Streamlit Community Cloud, CPU) |
 
@@ -116,7 +116,7 @@ Architecture diagram: [`docs/architecture.svg`](docs/architecture.svg) · full d
 * **Analysis:** The hybrid gives the best structural fidelity (SSIM best or tied on every paired set; PSNR best on LOL-v1 and extreme-dark, +3.2 dB over official Zero-DCE on LOL-v1). The deep-only network has the best perceptual scores (LPIPS/NIQE) because the classical priors make the hybrid refiner denoise harder — a perception–distortion trade-off. Raw PSNR on LOL-v2 favours the classical pipeline because of global exposure, not restoration quality (exposure-matched diagnostic: hybrid 22.30 dB vs classical 21.27 dB). Speed: 64 ms (classical), ~0.3 s (curve networks), 0.53 s (hybrid) per 600×400 frame on a laptop CPU.
 
 All tables, including moderate / non-uniform lighting and 74 real DICM+LIME photos (NIQE), noise σ and edge
-preservation: [`eval_P1_TXX.md`](eval_P1_TXX.md).
+preservation: [`eval_P1_T81.md`](eval_P1_T81.md).
 
 ### 3.2 Visual Outputs & Intermediate Representations
 1. **Extreme low-light:** [`docs/figures/conditions_synthetic.png`](docs/figures/conditions_synthetic.png) (rows 1–2),

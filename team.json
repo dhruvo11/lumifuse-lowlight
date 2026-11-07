@@ -1,15 +1,15 @@
 {
   "problem_id": "P1",
-  "team_id": "TXX",
-  "team_name": "TEAM_NAME",
+  "team_id": "T81",
+  "team_name": "Bugweiser",
   "members": [
     {
       "name": "Dhruv S P",
-      "usn": "USN1"
+      "usn": "1RUA24CSE0133"
     },
     {
       "name": "Harshit Rudresh",
-      "usn": "USN2"
+      "usn": "1RUA24CSE0157"
     }
   ],
   "github_url": "https://github.com/dhruvo11/lumifuse-lowlight",

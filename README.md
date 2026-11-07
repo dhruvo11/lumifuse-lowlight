@@ -1,6 +1,6 @@
 # LumiFuse — Robust Low-Light Image Restoration (Problem P1)
 
-**Live demo:** https://lumifuse.streamlit.app  ·  **Team:** TXX · TEAM_NAME · Dhruv S P (USN1), Harshit Rudresh (USN2)  ·  **Evaluation file:** [`eval_P1_TXX.md`](eval_P1_TXX.md)
+**Live demo:** https://lumifuse.streamlit.app  ·  **Team:** T81 · Bugweiser · Dhruv S P (1RUA24CSE0133), Harshit Rudresh (1RUA24CSE0157)  ·  **Evaluation file:** [`eval_P1_T81.md`](eval_P1_T81.md)
 
 LumiFuse restores severely under-exposed, noisy, colour-distorted photos. It runs a fully **adaptive classical
 pipeline** (Retinex illumination decomposition, guided/bilateral edge-preserving denoising, CLAHE, colour correction)
@@ -25,7 +25,7 @@ the classical illumination and amplification maps), then **fuses them per pixel*
 
 **Reading:** the hybrid has the best SSIM on four of five paired test sets (tied on the fifth) and the best PSNR on LOL-v1 and extreme-dark inputs; it beats official Zero-DCE by +3.2 dB on LOL-v1 and +5.7 dB on extreme-dark. The deep-only network wins the perceptual metrics (LPIPS/NIQE) because it smooths less; the classical pipeline wins raw PSNR on LOL-v2 because several LOL-v2 references are darker than average — after matching exposure to the reference (diagnostic only) the hybrid is the best restorer there too (22.30 vs 21.27 dB). Details and the full failure analysis: [`docs/ablation_and_failures.md`](docs/ablation_and_failures.md).
 
-Full tables (6 test sets × 4 methods, 15 ablation variants, latency): [`eval_P1_TXX.md`](eval_P1_TXX.md) ·
+Full tables (6 test sets × 4 methods, 15 ablation variants, latency): [`eval_P1_T81.md`](eval_P1_T81.md) ·
 design document: [`docs/design_doc.md`](docs/design_doc.md) · ablation & failure analysis:
 [`docs/ablation_and_failures.md`](docs/ablation_and_failures.md) · solution report:
 [`Hackathon_Solution_Report_P1.md`](Hackathon_Solution_Report_P1.md).
