@@ -12,6 +12,6 @@
       "usn": "USN2"
     }
   ],
-  "github_url": "https://github.com/<user>/lumifuse-lowlight",
-  "live_url": "https://huggingface.co/spaces/dhruvspo1/lumifuse"
+  "github_url": "https://github.com/dhruvo11/lumifuse-lowlight",
+  "live_url": "https://lumifuse.streamlit.app"
 }

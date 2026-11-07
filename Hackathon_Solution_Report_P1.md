@@ -120,7 +120,7 @@ preservation: [`eval_P1_<<TEAM_ID>>.md`](eval_P1_<<TEAM_ID>>.md).
 
 ### 3.2 Visual Outputs & Intermediate Representations
 1. **Extreme low-light:** [`docs/figures/conditions_synthetic.png`](docs/figures/conditions_synthetic.png) (rows 1–2),
-   [`docs/figures/conditions_real.png`](docs/figures/conditions_real.png) (DICM 27, mean brightness 0.017).
+   [`docs/figures/conditions_real.png`](docs/figures/conditions_real.png) (DICM 27, mean brightness ≈0.02).
 2. **Non-uniform / backlit scenes:** `conditions_synthetic.png` rows 3–4 (spotlight + gradient) and
    `conditions_real.png` (DICM 07 backlit, LIME night street) — bright regions keep their detail.
 3. **Intermediate states:** [`docs/figures/intermediates_lol.png`](docs/figures/intermediates_lol.png) and
