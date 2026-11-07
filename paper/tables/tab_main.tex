@@ -1,0 +1,18 @@
+\begin{table*}[t]
+\centering
+\caption{Comparison of classical, deep-learning and hybrid approaches on the paired LOL benchmarks (best in bold). LOL-v2-real test images never appear in training. Latency: Apple M1 CPU, 4 threads, $600\times400$ input.}
+\label{tab:main}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{l cccc cccc c}
+\toprule
+ & \multicolumn{4}{c}{LOL-v1 eval15 (15 images)} & \multicolumn{4}{c}{LOL-v2-real test (100 images)} & \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-9}
+Method & PSNR$\uparrow$ & SSIM$\uparrow$ & LPIPS$\downarrow$ & NIQE$\downarrow$ & PSNR$\uparrow$ & SSIM$\uparrow$ & LPIPS$\downarrow$ & NIQE$\downarrow$ & ms/frame \\
+\midrule
+Classical (adaptive) & 17.06 & 0.6612 & 0.386 & 6.42 & \textbf{19.12} & 0.6890 & 0.399 & 6.58 & 64 \\
+Zero-DCE (official) & 14.86 & 0.5627 & 0.335 & 7.65 & 18.06 & 0.5798 & 0.312 & 7.90 & 276 \\
+DL-only (LumiNet, no priors) & 17.23 & 0.7344 & \textbf{0.270} & \textbf{3.86} & 16.14 & \textbf{0.7382} & \textbf{0.296} & \textbf{3.96} & 308 \\
+\textbf{LumiFuse (hybrid)} & \textbf{18.09} & \textbf{0.7375} & 0.318 & 4.87 & 17.41 & 0.7378 & 0.354 & 4.72 & 529 \\
+\bottomrule
+\end{tabular}
+\end{table*}

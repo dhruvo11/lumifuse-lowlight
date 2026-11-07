@@ -1,0 +1,309 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125em\kern-.1667emX}}
+\newcommand{\repo}{\url{https://github.com/dhruvo11/lumifuse-lowlight}}
+\newcommand{\demo}{\url{https://lumifuse.streamlit.app}}
+
+\begin{document}
+
+\title{LumiFuse: Illumination-Adaptive Hybrid Low-Light Image Restoration Combining Retinex Priors with Zero-Reference Curve Estimation\\
+\large Hackathon Problem P1 --- Team T81 (Bugweiser)}
+
+\author{\IEEEauthorblockN{Dhruv S P}
+\IEEEauthorblockA{USN: 1RUA24CSE0133\\
+Team T81 (Bugweiser)}
+\and
+\IEEEauthorblockN{Harshit Rudresh}
+\IEEEauthorblockA{USN: 1RUA24CSE0157\\
+Team T81 (Bugweiser)}
+}
+
+\maketitle
+
+\begin{abstract}
+Images captured in low light are dark, noisy and colour-distorted, and any gain that lifts the shadows also amplifies
+noise and clips regions that were already lit. We present \emph{LumiFuse}, an illumination-adaptive restoration
+system that measures each image first and derives every parameter from those measurements. It runs two branches:
+an adaptive classical pipeline (guided-filter Retinex decomposition, gain-aware edge-preserving denoising, adaptive
+CLAHE and colour correction) and a 1.0\,M-parameter network built on Zero-DCE whose curve estimator and refinement
+U-Net are conditioned on the classical illumination map and on a noise-amplification map. A reliability-weighted
+fusion combines the branches per pixel, and no-reference quality gates correct exposure, residual noise and colour
+cast. Trained on a de-duplicated, leak-free LOL split (we found that 89 of the 100 LOL-v2-real test images are
+LOL-v1 training images), LumiFuse reaches 18.09\,dB PSNR / 0.7375 SSIM on LOL-v1 (+3.23\,dB over official Zero-DCE),
+the best SSIM on four of five paired test sets, introduces no clipped pixels, and runs in 0.53\,s per
+$600\times400$ frame on a laptop CPU. We report a 16-variant ablation, artefact metrics and an exposure-ambiguity
+failure analysis. Code, weights and evaluation: \repo; live demo: \demo.
+\end{abstract}
+
+\begin{IEEEkeywords}
+low-light image enhancement, Retinex, Zero-DCE, guided filter, CLAHE, hybrid restoration, image quality assessment
+\end{IEEEkeywords}
+
+\section{Introduction}
+Low-light photography suffers from five coupled degradations: severe under-exposure, sensor noise, colour casts,
+non-uniform illumination (lamps, windows, backlight) and loss of texture after denoising. Classical methods based
+on Retinex theory~\cite{land1971retinex,jobson1997msrcr,guo2017lime} are fast and interpretable but use hand-set
+parameters and amplify noise; learned enhancers~\cite{wei2018retinexnet,zhang2019kind,jiang2021enlightengan,
+guo2020zerodce,cai2023retinexformer} restore better on their training distribution but are opaque and can fail on
+unseen exposure levels. This work addresses the hackathon challenge of building an \emph{adaptive}, deployable
+system that combines both and is evaluated honestly on unseen data. Our contributions are:
+\begin{itemize}
+\item An adaptive classical pipeline in which illumination smoothing, re-lighting exponent, denoising strength, CLAHE
+clip limit and colour-correction strength are all computed from measured image statistics.
+\item \emph{LumiNet}, a Zero-DCE~\cite{guo2020zerodce} curve estimator extended with a classical illumination-prior
+channel plus a refinement U-Net conditioned on a classical noise-amplification map, fine-tuned from the official
+weights.
+\item A hybrid decision layer: two-sided input-exposure conditioning, reliability-weighted per-pixel fusion with a
+brightness-dependent global trust term, and no-reference quality gates.
+\item A leak-free protocol (test-overlap removal), evaluation on six test sets with all metrics requested by the
+problem statement, a 16-variant ablation, artefact metrics, failure analysis, and a public web deployment.
+\end{itemize}
+
+\section{Related Work}
+\textbf{Retinex and classical enhancement.} Retinex models an image as $I = R \odot L$~\cite{land1971retinex};
+MSRCR~\cite{jobson1997msrcr} and LIME~\cite{guo2017lime} estimate and adjust the illumination $L$, LIME refining a
+max-RGB initial map with a structure-aware prior. CLAHE~\cite{zuiderveld1994clahe} equalises local histograms with a
+clip limit; bilateral~\cite{tomasi1998bilateral} and guided~\cite{he2013guided} filters smooth noise while keeping
+edges. \textbf{Learned enhancement.} RetinexNet~\cite{wei2018retinexnet} introduced the paired LOL dataset and a
+decomposition network; KinD~\cite{zhang2019kind} adds a dedicated denoising branch; EnlightenGAN~\cite{jiang2021enlightengan}
+trains without pairs; Zero-DCE~\cite{guo2020zerodce} and Zero-DCE++~\cite{li2022zerodcepp} estimate pixel-wise
+quadratic curves with zero-reference losses; Retinexformer~\cite{cai2023retinexformer} is a recent transformer.
+LumiFuse keeps the efficiency and monotonicity of curve estimation and injects classical priors where curves are
+weakest: noise and colour.
+
+\section{Method}
+Fig.~\ref{fig:arch} shows the inference path; module and function names in the figure match the repository.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/architecture.png}
+\caption{LumiFuse architecture. An analysis stage measures the input; a classical branch (top) and an
+illumination-guided deep branch (middle) restore it in parallel; reliability fusion and no-reference quality gates
+(bottom) produce the output together with all intermediate maps.}
+\label{fig:arch}
+\end{figure*}
+
+\subsection{Image analysis}
+For each input we measure mean/median luminance, the fraction of dark ($Y<0.1$) and bright ($Y>0.85$) pixels,
+illumination non-uniformity (standard deviation of the log of a heavily blurred max-RGB map), colour cast
+$(\max_c\mu_c-\min_c\mu_c)/\bar\mu$, and the noise standard deviation $\sigma$ with Immerk{\ae}r's
+operator~\cite{immerkaer1996noise} restricted to the flattest 50\,\% of pixels so that texture is not counted as
+noise. These values select every parameter below and a condition label shown to the user.
+
+\subsection{Adaptive classical branch}
+\textbf{Illumination and re-lighting.} $L_0=\max_c I_c$ is refined by a self-guided filter $L=\mathrm{GF}(L_0,L_0;r,\epsilon)$
+with $r=\min(H,W)/50$ and $\epsilon=(0.1\,P_{90}(L_0))^2$, which makes the smoothing scale-invariant to exposure. The
+illumination is re-lit as $L'=L^{g}$ and the image as $\hat I = I\odot L'/L$, with
+\begin{equation}
+g=\mathrm{clip}\!\left(\frac{\ln 0.45}{\ln \exp(\overline{\ln L})},\,0.15,\,1\right),
+\end{equation}
+mapping the log-average illumination to the brightness of well-exposed references. Because $L'/L=L^{g-1}$, dark
+regions are lifted most and regions with $L\approx1$ are left unchanged, which protects highlights.
+\textbf{Gain-aware denoising.} After re-lighting, $\sigma$ is re-measured; luma is filtered by a guided filter with
+$\epsilon_Y=(5\sigma)^2$ (bilateral is selectable) and chroma by a joint guided filter guided by the clean luma. The
+filtered result is blended per pixel with weight $\propto (L'/L)$, so noise suppression follows amplification.
+\textbf{CLAHE} is applied to LAB lightness with clip limit $1+2.5(0.22-c)/0.22\in[1,3]$ from the RMS contrast $c$
+and a lighter blend for noisy images. \textbf{Colour correction} applies gray-world gains with strength proportional
+to the measured cast, and saturation compensation proportional to the measured desaturation. A percentile contrast
+stretch (skipped when $\sigma>0.02$) and a soft-knee roll-off above 0.88 complete the branch. With
+\texttt{adaptive=False} each rule is replaced by a fixed constant.
+
+\subsection{Illumination-guided deep branch (LumiNet)}
+\textbf{Curve stage.} The Zero-DCE estimator (seven $3\times3$ convolutions, 32 channels) receives $[I, L]$, where $L$
+is the same guided-filter illumination computed in PyTorch, and predicts eight three-channel curve maps $A_n$ applied
+iteratively:
+\begin{equation}
+E_n = E_{n-1} + A_n \odot E_{n-1}\odot(1-E_{n-1}),\quad E_0=I .
+\end{equation}
+Curves are estimated at half resolution and bilinearly up-sampled as in Zero-DCE++~\cite{li2022zerodcepp}. The
+network is initialised from the authors' weights; the new input channel is zero-initialised, so training starts
+exactly at official Zero-DCE. \textbf{Refinement.} Curves can brighten but cannot denoise. A three-level
+U-Net~\cite{ronneberger2015unet} (0.93\,M parameters) receives $[E, L, \tfrac14\log G]$ with the amplification map
+$G=Y(E)/(Y(I)+0.02)$---a classical noise model telling the network how much each pixel's noise was multiplied---and
+predicts a residual: $\hat Y = E + \mathcal{R}_\theta(E,L,G)$.
+\textbf{Losses.} The refiner is trained with $\mathcal{L}_1+0.2(1-\mathrm{SSIM})+0.1\,\mathcal{L}_1(\nabla_{\!S})
++0.1\,\mathcal{L}_{\angle}$, where $\nabla_{\!S}$ are Sobel gradients (edge preservation) and $\mathcal{L}_{\angle}$
+is the cosine distance between RGB vectors (colour shifts). The curve stage is trained with a low-pass
+$\mathcal{L}_1$ ($4\times4$ average pooling, since curves should not chase noise), $0.5\,\mathcal{L}_{\angle}$, and the
+Zero-DCE illumination-smoothness term $10\,\mathrm{TV}(A)$. The curve output is detached before the refiner; without
+this, joint optimisation collapsed the curve stage into a feature map (mean R/G outputs 0.07/0.92).
+
+\subsection{Hybrid decision layer}
+\textbf{Input conditioning.} The network learned the exposure mapping of LOL inputs (mean luminance $\mu_0=0.05$).
+Inputs outside $[0.6\mu_0, 1.2\mu_0]$ are rescaled by $k=\mu_0/\mu$ (at most $4\times$) or $k=1.2\mu_0/\mu$
+(at least $0.1\times$). \textbf{Reliability fusion.} With $Y_D$, $Y_C$ the luminance of the deep and classical
+outputs, $u=\mathrm{clip}((0.12-Y_D)/0.12)\,[Y_C>Y_D]$ marks regions left too dark and
+$o=\mathrm{clip}((Y_D-0.9)/0.1)\,[Y_C<Y_D]$ regions blown out; a global trust term
+$\beta=\mathrm{clip}((\mu-0.12)/(0.40-0.12),0,0.9)$ shifts weight to the classical branch for moderately dark inputs,
+where the network's strong denoising flattens contrast. Then
+\begin{equation}
+W=\max\!\big(\mathcal{G}_{s}(\max(u,o)),\,\beta\big),\qquad \hat I=(1-W)\odot D + W\odot C,
+\end{equation}
+with a Gaussian blur $\mathcal{G}_s$, $s=\min(H,W)/80$, to avoid seams. \textbf{Quality gates.} If the mean output
+luminance leaves $[0.30,0.62]$ a luminance-only gamma restores it; if residual $\sigma>0.012$ a guided-filter
+denoise is applied; if the colour cast exceeds 0.10 a partial gray-world correction is applied; a soft knee
+protects highlights. Well-lit inputs ($\mu>0.35$) are blended back towards the original.
+
+\section{Experimental Setup}
+\textbf{Data and leak-free split.} We pooled LOL-v1 \texttt{our485}~\cite{wei2018retinexnet} and LOL-v2-real
+\texttt{Train}~\cite{yang2021lolv2}. Hashing every low-light input revealed that 89 of the 100 LOL-v2-real test
+images are pixel-identical to LOL-v1 training images. We removed all 98 pairs overlapping either test set and 399
+duplicates, leaving 644 training and 33 validation pairs. The validation split---never the test sets---was used for
+checkpoint selection and every hyper-parameter, including synthetic variants of validation images for exposure
+thresholds. \textbf{Test sets.} LOL-v1 \texttt{eval15}; LOL-v2-real test (100); three synthetic conditions built from
+30 unseen LOL-v2 references with a Poisson--Gaussian camera model~\cite{foi2008noise} (linearise, scale exposure,
+shot + read noise, re-encode, 8-bit quantise): moderate ($\times0.08$--$0.15$), extreme-dark
+($\times0.003$--$0.006$) and non-uniform (gradient + spotlight, $\times0.004$--$0.6$); and 74 real DICM~\cite{lee2013dicm}
+and LIME~\cite{guo2017lime} photographs. \textbf{Metrics} (in the order of the problem statement): PSNR and
+SSIM~\cite{wang2004ssim} on RGB; LPIPS (AlexNet)~\cite{zhang2018lpips}; NIQE~\cite{mittal2013niqe} (MATLAB-equivalent
+implementation); CPU latency; residual noise $\sigma$; edge preservation (correlation of Sobel magnitudes with the
+reference). No ground-truth-mean brightness correction is applied to any score. \textbf{Training.} 4000 iterations,
+batch 8, $160^2$ crops with flips/rotations and illumination augmentation (30\,\% darkened $\times0.3$--1, 15\,\%
+brightened $\times1$--2, 20\,\% multiplied by a random smooth field), AdamW with one-cycle schedule ($4\times10^{-4}$
+refiner, $2\times10^{-4}$ curve stage), Apple M1 GPU, about 40 minutes per model. The DL-only baseline is the
+same network and recipe without the prior channels.
+
+\section{Results}
+\input{tables/tab_main}
+
+\textbf{Benchmark comparison.} Table~\ref{tab:main} compares the four approaches. Our official Zero-DCE result on
+LOL-v1 (14.86\,dB) reproduces the value reported in~\cite{guo2020zerodce}, validating the metric code. LumiFuse
+obtains the best PSNR and SSIM on LOL-v1 (18.09\,dB / 0.7375; +3.23\,dB over Zero-DCE, +1.03\,dB over the classical
+pipeline, +0.86\,dB over DL-only). On LOL-v2 it ties DL-only on SSIM but its PSNR is below the classical pipeline;
+Section~\ref{sec:failure} shows that this is a global-exposure choice rather than restoration error. DL-only has the
+best LPIPS and NIQE: the classical priors push the refiner towards stronger denoising, which raises fidelity at some
+cost in texture---the perception--distortion trade-off~\cite{blau2018perception}. Fig.~\ref{fig:lol} shows examples.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/comparison_lol.png}
+\caption{LOL-v1 examples. Classical output is grainy, official Zero-DCE is washed out with colour casts, DL-only is
+clean but flat; LumiFuse balances exposure, noise and colour.}
+\label{fig:lol}
+\end{figure*}
+
+\input{tables/tab_conditions}
+
+\textbf{Generalisation across illumination.} Table~\ref{tab:conditions} and Figs.~\ref{fig:syn}--\ref{fig:real}
+evaluate unseen lighting conditions. On extremely dark inputs LumiFuse is best on PSNR and SSIM (16.01\,dB / 0.501
+versus 0.317 classical and 0.083 Zero-DCE). Under moderate and non-uniform light it has the best SSIM (0.799 and
+0.796) while the classical pipeline or Zero-DCE keep slightly higher PSNR. On real photographs the classical and
+Zero-DCE outputs have marginally lower NIQE (3.80--3.86 vs.\ 4.13); NIQE rewards high-frequency texture, including
+residual noise.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/conditions_synthetic.png}
+\caption{Unseen scenes under extreme darkness (rows 1--2) and non-uniform spotlight illumination (rows 3--4).}
+\label{fig:syn}
+\end{figure*}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/conditions_real.png}
+\caption{Real photographs (DICM/LIME): very dark, backlit, night street and indoor scenes.}
+\label{fig:real}
+\end{figure}
+
+\input{tables/tab_artifacts}
+
+\textbf{Over-exposure, colour shift and detail loss.} Table~\ref{tab:artifacts} quantifies the artefacts named in
+the challenge. LumiFuse introduces no clipped pixels on any test set (the curve formulation cannot exceed 1 and the
+soft knee rolls off highlights), whereas the classical stretch clips up to 0.11\,\% on LOL-v1. Its hue error is
+close to the best on LOL-v2 and much lower than Zero-DCE on extreme-dark inputs (5.8$^\circ$ vs.\ 29.2$^\circ$),
+and it preserves the most edge structure there. $\Delta E$ also counts brightness and therefore mirrors the
+exposure differences discussed below.
+
+\textbf{Intermediate representations.} Fig.~\ref{fig:inter} shows the maps the system exposes: the classical
+illumination prior, reflectance, curve strength, curve-stage output, amplification map $G$, refiner correction,
+classical output and fusion weights. The refiner correction is largest exactly where $G$ is large, confirming that
+the network uses the noise-amplification prior.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/intermediates_lol.png}
+\caption{Intermediate states of the hybrid pipeline for a LOL-v1 input.}
+\label{fig:inter}
+\end{figure*}
+
+\input{tables/tab_ablation}
+
+\textbf{Ablation.} Table~\ref{tab:ablation} removes one component at a time. The classical priors add +1.00\,dB on
+LOL-v1 and +1.14\,dB on LOL-v2 (on the synthetic sets the prior-free network is slightly better, and it always has
+better LPIPS/NIQE). Removing the refiner leaves LOL-v1 PSNR unchanged but lowers SSIM by 0.023--0.049 and triples
+residual noise. Fine-tuning adds +3.03\,dB on LOL-v1 and +2.0\,dB on extreme-dark but costs 2.6\,dB on LOL-v2,
+whose references are darker. Input conditioning (+1.75\,dB) and the global trust term (+1.09\,dB, SSIM +0.054)
+matter most under non-uniform light; the per-pixel reliability map rarely fires on these sets and acts as a safety
+net for blown highlights in real photos. Quality gates add +0.30\,dB on extreme-dark and +0.14\,dB on LOL-v2.
+
+\input{tables/tab_classical}
+
+Table~\ref{tab:classical} ablates the classical branch. Retinex re-lighting is essential ($-7.8$\,dB without it);
+denoising adds 1.2--3.3\,dB; guided filtering beats bilateral filtering; adaptive parameters beat fixed ones by
++1.79\,dB (LOL-v1), +1.48\,dB (LOL-v2) and +2.20\,dB (extreme-dark). CLAHE, required by the challenge, lowers PSNR
+against the low-contrast LOL references while increasing local contrast; we therefore use an adaptive clip limit
+and a noise-dependent blend.
+
+\section{Failure Analysis and Limitations}
+\label{sec:failure}
+\input{tables/tab_exposure}
+
+\textbf{Global exposure ambiguity.} On a few LOL-v2 scene series (e.g.\ \texttt{00724}--\texttt{00730},
+\texttt{00763}--\texttt{00764}) LumiFuse produces a mean brightness near 0.5 where the reference is near 0.33,
+losing up to $\sim$10\,dB on those images (Fig.~\ref{fig:fail}). Rescaling each output's mean brightness to the
+reference (a diagnostic that uses the ground truth and is never reported as a score) lifts LumiFuse to the best
+value on LOL-v2 (22.30\,dB vs.\ 21.27\,dB for the classical pipeline) and on every other paired set except moderate
+light, where it ties (Table~\ref{tab:exposure}). The deficit is therefore exposure choice, not restoration quality.
+Target brightness is ill-posed from a dark input: references use photographer-chosen exposures, the network learns
+their average, and PSNR penalises a global offset heavily (a uniform error of 0.1 alone caps PSNR at 20\,dB). Using
+the classical illumination estimate as the exposure target lowered validation PSNR from 18.54 to 17.39\,dB and was
+rejected. Mitigations: a user-controlled target exposure (Zero-DCE's exposure loss already takes a target) or
+exposure-conditioned training.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/failure_cases.png}
+\caption{Worst LumiFuse results on LOL-v2-real: output, reference and absolute error. Errors are dominated by global
+brightness.}
+\label{fig:fail}
+\end{figure}
+
+\textbf{Extreme darkness.} At $\times0.003$ exposure a white surface collects tens of photons and the shadows occupy
+1--5 code values after 8-bit quantisation; every method has low SSIM there and LumiFuse leaves low-frequency chroma
+blotches. RAW or burst input and refiner training with synthetic Poisson--Gaussian noise are the natural fixes.
+\textbf{Other limitations.} The classical re-lighting exponent is global, so a bright spotlight reduces the lift of
+the dark side; strong point lights in real photographs show amplified lens glare; training data are mostly indoor
+LOL scenes. \textbf{Ethics.} The refiner is a learned prior that can smooth or, rarely, invent fine texture, so
+outputs must not be used as forensic or medical evidence. The web application processes images in memory and stores
+nothing. Datasets are used under their research terms and are not redistributed.
+
+\section{Deployment and Reproducibility}
+The system is deployed as a Streamlit web application on Streamlit Community Cloud (\demo) with a before/after
+slider, intermediate maps, a compare-all mode, PNG download and explicit error states; inputs are capped at 768\,px
+and a photo is processed in about 1.6\,s on the cloud CPU. A Gradio version and a Dockerfile (built and run, 1.7\,s
+per request in the container) provide one-command local use, and \texttt{run\_inference.py} provides batch
+inference. The repository (\repo) contains all source code, trained weights, the architecture diagram, a design
+document, the evaluation file \texttt{eval\_P1\_T81.md}, ablation and failure analyses and 23 robustness tests. A
+fresh clone that re-downloads all datasets and re-runs data preparation and evaluation reproduces the data split and
+all reported metrics to four decimal places.
+
+\section{Conclusion}
+LumiFuse shows that classical illumination analysis and a compact learned enhancer are complementary: classical
+priors improve the network's fidelity (+1.0--1.1\,dB on real LOL data), measured image statistics make every stage
+adaptive, and reliability fusion with no-reference gates keeps the system safe on inputs outside the training
+distribution, all at about half a second per frame on a CPU. The main open problem is choosing the target exposure;
+exposure-conditioned training and a user brightness control are our next steps.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

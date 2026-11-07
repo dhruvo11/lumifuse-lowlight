@@ -1,0 +1,20 @@
+\begin{table}[t]
+\centering
+\caption{Exposure diagnostic: PSNR before and after rescaling each output's mean brightness to the reference (GT-mean; diagnostic only, never reported as a score). Bold: best GT-mean PSNR over all four methods. Last column: hybrid mean absolute brightness error.}
+\label{tab:exposure}
+\setlength{\tabcolsep}{3pt}
+\footnotesize
+\begin{tabular}{l cc cc c}
+\toprule
+ & \multicolumn{2}{c}{Classical} & \multicolumn{2}{c}{LumiFuse} & \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Set & PSNR & GT-mean & PSNR & GT-mean & $|\Delta Y|$ \\
+\midrule
+LOL-v1 & 17.06 & 19.65 & 18.09 & 20.98 & 0.081 \\
+LOL-v2 & 19.12 & 21.27 & 17.41 & \textbf{22.30} & 0.102 \\
+Moderate & 17.87 & \textbf{20.06} & 17.10 & 20.06 & 0.094 \\
+Extreme & 14.99 & 18.85 & 16.01 & \textbf{21.00} & 0.123 \\
+Non-unif. & 16.88 & 18.23 & 16.73 & \textbf{18.94} & 0.078 \\
+\bottomrule
+\end{tabular}
+\end{table}

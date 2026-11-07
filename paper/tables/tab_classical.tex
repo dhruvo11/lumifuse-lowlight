@@ -1,0 +1,22 @@
+\begin{table}[t]
+\centering
+\caption{Ablation of the classical pipeline (PSNR / SSIM).}
+\label{tab:classical}
+\setlength{\tabcolsep}{2.5pt}
+\footnotesize
+\begin{tabular}{l cc cc cc}
+\toprule
+ & \multicolumn{2}{c}{LOL-v1} & \multicolumn{2}{c}{LOL-v2} & \multicolumn{2}{c}{Extreme} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+Variant & PSNR & SSIM & PSNR & SSIM & PSNR & SSIM \\
+\midrule
+Adaptive, full & 17.06 & 0.661 & 19.12 & 0.689 & 14.99 & 0.317 \\
+Fixed parameters & 15.27 & 0.639 & 17.64 & 0.639 & 12.79 & 0.115 \\
+$-$ Retinex & 9.24 & 0.345 & 11.40 & 0.355 & 7.55 & 0.150 \\
+$-$ denoising & 15.90 & 0.374 & 16.67 & 0.401 & 11.69 & 0.074 \\
+Bilateral (vs guided) & 16.74 & 0.590 & 18.38 & 0.607 & 14.82 & 0.216 \\
+$-$ CLAHE & \textbf{17.17} & \textbf{0.707} & \textbf{20.24} & \textbf{0.736} & 13.25 & \textbf{0.466} \\
+$-$ colour correction & 17.11 & 0.665 & 18.47 & 0.689 & \textbf{15.16} & 0.319 \\
+\bottomrule
+\end{tabular}
+\end{table}

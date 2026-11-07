@@ -1,0 +1,24 @@
+\begin{table}[t]
+\centering
+\caption{Artefacts: newly clipped pixels (\%), colour shift (CIEDE2000 $\Delta E$, RGB angle in degrees), edge preservation (Sobel-magnitude correlation) and residual noise $\sigma$.}
+\label{tab:artifacts}
+\setlength{\tabcolsep}{3pt}
+\footnotesize
+\begin{tabular}{l ccccc}
+\toprule
+Method & Clip\%$\downarrow$ & $\Delta E\downarrow$ & Angle$\downarrow$ & Edge$\uparrow$ & Noise $\sigma\downarrow$ \\
+\midrule
+\multicolumn{6}{l}{\textit{LOL-v2-real test}}\\
+Classical & 0.004 & \textbf{12.8} & 7.6 & 0.777 & 0.0151 \\
+Zero-DCE & 0.000 & 14.2 & 12.4 & \textbf{0.882} & 0.0215 \\
+DL-only & 0.000 & 15.4 & \textbf{4.1} & 0.839 & 0.0032 \\
+\textbf{LumiFuse} & \textbf{0.000} & 13.5 & 4.3 & 0.792 & \textbf{0.0024} \\
+\midrule
+\multicolumn{6}{l}{\textit{Synthetic extreme-dark}}\\
+Classical & \textbf{0.000} & 16.0 & \textbf{4.2} & 0.192 & 0.0402 \\
+Zero-DCE & 0.000 & 30.4 & 29.2 & 0.141 & 0.0910 \\
+DL-only & 0.000 & \textbf{15.7} & 7.7 & 0.372 & 0.0088 \\
+\textbf{LumiFuse} & 0.000 & 16.2 & 5.8 & \textbf{0.385} & \textbf{0.0074} \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -47,7 +47,7 @@
     <text class="t" x="653" y="122" text-anchor="middle">Gain-aware denoise</text>
     <text class="s" x="653" y="141" text-anchor="middle">guided (or bilateral) on Y,</text>
     <text class="s" x="653" y="157" text-anchor="middle">joint-guided on Cr/Cb;</text>
-    <text class="s" x="653" y="173" text-anchor="middle">ε = (k·σ)², weight ∝ gain</text>
+    <text class="s" x="653" y="173" text-anchor="middle">ε = (k·σ)², weight ~ gain</text>
     <text class="s" x="653" y="189" text-anchor="middle">L'/L (noise amplification)</text>
     <text class="m" x="653" y="207" text-anchor="middle">utils.guided_filter</text>
 
@@ -62,9 +62,9 @@
     <rect class="box" x="914" y="100" width="150" height="115" fill="#ffffff"/>
     <text class="t" x="989" y="122" text-anchor="middle">Colour correction</text>
     <text class="s" x="989" y="141" text-anchor="middle">gray-world WB, strength</text>
-    <text class="s" x="989" y="157" text-anchor="middle">∝ measured cast;</text>
+    <text class="s" x="989" y="157" text-anchor="middle">~ measured cast;</text>
     <text class="s" x="989" y="173" text-anchor="middle">saturation compensation</text>
-    <text class="s" x="989" y="189" text-anchor="middle">∝ desaturation</text>
+    <text class="s" x="989" y="189" text-anchor="middle">~ desaturation</text>
     <text class="m" x="989" y="207" text-anchor="middle">HSV / channel gains</text>
 
     <rect class="box" x="1082" y="100" width="165" height="115" fill="#ffffff"/>

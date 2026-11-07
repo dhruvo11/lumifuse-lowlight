@@ -1,0 +1,18 @@
+\begin{table*}[t]
+\centering
+\caption{Generalisation across illumination conditions on unseen scenes: synthetic moderate, extremely dark and non-uniform (gradient + spotlight) lighting built from 30 LOL-v2 test references with a Poisson--Gaussian camera model, and 74 real DICM/LIME photographs (no reference, NIQE).}
+\label{tab:conditions}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{l ccc ccc ccc c}
+\toprule
+ & \multicolumn{3}{c}{Moderate ($\times$0.08--0.15)} & \multicolumn{3}{c}{Extreme-dark ($\times$0.003--0.006)} & \multicolumn{3}{c}{Non-uniform} & Real \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}\cmidrule(lr){11-11}
+Method & PSNR & SSIM & LPIPS & PSNR & SSIM & LPIPS & PSNR & SSIM & LPIPS & NIQE \\
+\midrule
+Classical (adaptive) & 17.87 & 0.762 & 0.254 & 14.99 & 0.317 & 0.908 & \textbf{16.88} & 0.748 & 0.266 & 3.86 \\
+Zero-DCE (official) & \textbf{18.50} & 0.738 & \textbf{0.245} & 10.34 & 0.083 & 1.300 & 16.82 & 0.720 & 0.274 & \textbf{3.80} \\
+DL-only (LumiNet, no priors) & 13.53 & 0.737 & 0.314 & 15.78 & 0.490 & \textbf{0.746} & 13.94 & 0.738 & 0.322 & 3.94 \\
+\textbf{LumiFuse (hybrid)} & 17.10 & \textbf{0.799} & 0.262 & \textbf{16.01} & \textbf{0.501} & 0.763 & 16.73 & \textbf{0.796} & \textbf{0.252} & 4.13 \\
+\bottomrule
+\end{tabular}
+\end{table*}

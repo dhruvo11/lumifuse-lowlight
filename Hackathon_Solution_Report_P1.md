@@ -7,6 +7,7 @@
 | **Team Name** | `Bugweiser` (Team ID `T81`) |
 | **Team Members** | Dhruv S P — 1RUA24CSE0133<br>Harshit Rudresh — 1RUA24CSE0157 |
 | **GitHub Repository** | https://github.com/dhruvo11/lumifuse-lowlight — evaluated commit `9761bd9` |
+| **IEEE paper** | `paper/main.pdf` (LaTeX/Overleaf source in `paper/`) |
 | **Live Demo / Deployment** | https://lumifuse.streamlit.app (Streamlit Community Cloud, CPU) |
 
 ---
