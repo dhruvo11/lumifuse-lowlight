@@ -3,6 +3,7 @@ Local run:  streamlit run webapp/streamlit_app.py"""
 import base64
 import glob
 import html
+import importlib
 import io
 import json
 import os
@@ -16,6 +17,13 @@ import cv2  # noqa: E402
 import streamlit as st  # noqa: E402
 import streamlit.components.v1 as components  # noqa: E402
 import torch  # noqa: E402
+
+import lumifuse.utils  # noqa: E402
+
+# Streamlit Cloud re-runs this script after a git push but keeps already-imported package
+# modules in memory; reload ours if it is an older version.
+if not hasattr(lumifuse.utils, "decode_image_bytes"):
+    importlib.reload(lumifuse.utils)
 
 from lumifuse.niqe import niqe  # noqa: E402
 from lumifuse.pipeline import LumiFuse  # noqa: E402
