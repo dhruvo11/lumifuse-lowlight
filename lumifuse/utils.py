@@ -5,13 +5,25 @@ import cv2
 import numpy as np
 
 LUMA = np.array([0.299, 0.587, 0.114], dtype=np.float32)
+# ANYCOLOR|ANYDEPTH keeps grey and 16-bit images and, unlike IMREAD_UNCHANGED, applies the
+# EXIF orientation tag (phone cameras store portrait photos sideways plus a "rotate" flag).
+DECODE_FLAGS = cv2.IMREAD_ANYCOLOR | cv2.IMREAD_ANYDEPTH
+
+
+def decode_image_bytes(data: bytes) -> np.ndarray:
+    """Decode an uploaded file to float RGB [0,1]. Raises ValueError if it is not an image."""
+    buf = np.frombuffer(data, np.uint8)
+    img = cv2.imdecode(buf, DECODE_FLAGS) if buf.size else None
+    if img is None:
+        raise ValueError("Not a readable image")
+    return to_float_rgb(img, bgr=img.ndim == 3)
 
 
 def load_image(path: str) -> np.ndarray:
-    img = cv2.imread(str(path), cv2.IMREAD_UNCHANGED)
+    img = cv2.imread(str(path), DECODE_FLAGS)
     if img is None:
         raise ValueError(f"Could not read image: {path}")
-    return to_float_rgb(img, bgr=True)
+    return to_float_rgb(img, bgr=img.ndim == 3)
 
 
 def to_float_rgb(img: np.ndarray, bgr: bool = False) -> np.ndarray:

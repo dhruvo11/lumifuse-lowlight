@@ -13,14 +13,13 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
 import cv2  # noqa: E402
-import numpy as np  # noqa: E402
 import streamlit as st  # noqa: E402
 import streamlit.components.v1 as components  # noqa: E402
 import torch  # noqa: E402
 
 from lumifuse.niqe import niqe  # noqa: E402
 from lumifuse.pipeline import LumiFuse  # noqa: E402
-from lumifuse.utils import resize_max_side, to_float_rgb, to_uint8  # noqa: E402
+from lumifuse.utils import decode_image_bytes, load_image, resize_max_side, to_uint8  # noqa: E402
 
 MAX_SIDE = 768
 MAX_SIDE_COMPARE = 512
@@ -210,13 +209,9 @@ with left:
         img, err = None, None
         try:
             if up is not None:
-                data = np.frombuffer(up.getvalue(), np.uint8)
-                raw = cv2.imdecode(data, cv2.IMREAD_UNCHANGED)
-                if raw is None:
-                    raise ValueError
-                img = to_float_rgb(raw, bgr=raw.ndim == 3)
+                img = decode_image_bytes(up.getvalue())  # also rotates phone photos upright
             elif ex in examples:
-                img = to_float_rgb(cv2.imread(examples[ex], cv2.IMREAD_UNCHANGED), bgr=True)
+                img = load_image(examples[ex])
         except Exception:
             err = "That file couldn't be read as an image. Try a JPG or PNG."
         if img is not None and min(img.shape[:2]) < 32:

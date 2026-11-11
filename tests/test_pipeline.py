@@ -51,6 +51,28 @@ def test_input_formats():
         assert f.shape == (50, 60, 3) and f.dtype == np.float32 and 0 <= f.min() and f.max() <= 1
 
 
+def test_upload_decoding(tmp_path):
+    import io
+
+    from PIL import Image
+
+    from lumifuse.utils import decode_image_bytes
+    # A phone portrait photo: landscape pixels + EXIF "rotate 90" tag. Left half white.
+    a = np.zeros((60, 100, 3), np.uint8)
+    a[:, :50] = 255
+    im = Image.fromarray(a)
+    ex = im.getexif()
+    ex[0x0112] = 6
+    buf = io.BytesIO()
+    im.save(buf, "JPEG", exif=ex)
+    up = decode_image_bytes(buf.getvalue())
+    assert up.shape == (100, 60, 3)                     # shown upright, as on the phone
+    assert up[:40].mean() > 0.8 and up[60:].mean() < 0.2  # white half rotated to the top
+    for bad in (b"", b"this is not an image"):
+        with pytest.raises(ValueError):
+            decode_image_bytes(bad)
+
+
 def test_condition_labels():
     dark = np.full((128, 128, 3), 0.02, np.float32)
     bright = np.full((128, 128, 3), 0.6, np.float32)
